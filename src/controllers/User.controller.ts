@@ -1,10 +1,11 @@
 import { User } from "../entities/User";
-import { UserCreateRequest } from '../requests/user/create/UserCreate.request';
+import { UserCreateRequest, UserUpdateRequest } from '../requests';
 import { AppDataSource } from "../data-source"
+import { Error } from "../responses/error";
 
 export class UserController {
 
-    static async newUser(request: UserCreateRequest): Promise<void> {
+    static async create(request: UserCreateRequest): Promise<User | Error> {
             const data = request.getBody();
             const user = new User();
             user.firstName = data.firstName;
@@ -13,8 +14,11 @@ export class UserController {
             user.password = data.password;
     
             const userRepository = AppDataSource.getRepository(User);
-    
-            await userRepository.save(user).catch(err => console.error(err));
+            try {
+                return await userRepository.save(user);
+            } catch (err) {
+                throw new Error('Email exists');
+            }
     }
 
     static async getUsers(): Promise<User[]> {
@@ -22,5 +26,18 @@ export class UserController {
         return await userRepository.find();
     }
 
-    
+    static async update(request: UserUpdateRequest): Promise<User> {
+        const data = request.getBody();
+        const userRepository = AppDataSource.getRepository(User)
+        const userToUpdate = await userRepository.findOneBy({
+            email: data.email,
+        });
+        if (!userToUpdate) throw new Error('User does not exist');
+        if (data.newFirstName) userToUpdate.firstName = data.newFirstName;
+        if (data.newLastName) userToUpdate.lastName = data.newLastName;
+        if (data.newEmail) userToUpdate.email = data.newEmail;
+        if (data.newPassword) userToUpdate.password = data.newPassword;
+        const response = await userRepository.save(userToUpdate);
+        return response;
+    }
 }

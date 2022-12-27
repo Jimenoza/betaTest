@@ -1,7 +1,9 @@
 import * as express from "express"
 import { Request, Response } from "express"
 import { UserController } from "./controllers";
-import { UserCreateRequest } from './requests';
+import { UserCreateRequest, UserUpdateRequest } from './requests';
+import { AppDataSource } from "./data-source"
+import { User } from "./entities/User";
 const dotenv = require("dotenv");
 dotenv.config();
 
@@ -9,56 +11,41 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 
-// register routes
-
-// app.get('/', (req: Request, res: Response) => {
-//     console.log('process.env.DB_HOST', process.env.DB_HOST);
-//     res.send('Hola Mundo!')
-//   })
-
-// app.get("/users", function (req: Request, res: Response) {
-//     // here we will have logic to return all users
-// })
-
-// app.get("/users/:id", function (req: Request, res: Response) {
-//     // here we will have logic to return user by id
-// })
-
-// app.post("/users", function (req: Request, res: Response) {
-//     // here we will have logic to save a user
-// })
-
-// app.put("/users/:id", function (req: Request, res: Response) {
-//     // here we will have logic to update a user by a given user id
-// })
-
-// app.delete("/users/:id", function (req: Request, res: Response) {
-//     // here we will have logic to delete a user by a given user id
-// })
-
-// start express server
-
-import { AppDataSource } from "./data-source"
-
 AppDataSource.initialize().then(async () => {
 
     app.post('/users', async (req: Request, res: Response) => {
         try {
             const request = new UserCreateRequest(req);
-            await UserController.newUser(request);
-            res.send({saved: true});
+            const response = await UserController.create(request);
+            res.send({res: response});
         }
         catch (err) {
             res.statusMessage = err;
             res.status(400).end();
         }
-        // console.log(req.body);
     });
 
     app.get('/users', async (req: Request, res: Response) => {
         const users = await UserController.getUsers();
         res.send({saved: users});
-        // console.log(req.body);
+    });
+
+    app.put('/users',async (req: Request, res: Response) => {
+        try {
+            const request = new UserUpdateRequest(req);
+            const response = await UserController.update(request);
+            res.send({res: response});
+        }
+        catch (err) {
+            res.statusMessage = err;
+            res.status(400).end();
+        }
+    })
+
+    app.delete('/users', async (req: Request, res: Response) => {
+        const photoRepository = AppDataSource.getRepository(User)
+        const photosToRemove = await photoRepository.delete({email : 'a@mail.com'})
+        res.send({deleted: photosToRemove});
     });
 
     app.listen(3000, () => console.log('App listening'));
