@@ -1,3 +1,4 @@
-import { UserController } from "./User.controller";
+import { UserController } from "./user/User.controller";
+import { AssetController } from "./asset/Asset.controller";
 
-export {UserController};
+export {UserController, AssetController};

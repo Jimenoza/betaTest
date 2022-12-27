@@ -1,9 +1,13 @@
 import * as express from "express"
 import { Request, Response } from "express"
-import { UserController } from "./controllers";
-import { UserCreateRequest, UserUpdateRequest, UserDeleteRequest } from './requests';
+import { UserController, AssetController } from "./controllers";
+import { UserCreateRequest,
+    UserUpdateRequest,
+    UserDeleteRequest,
+    AssetRetreiveRequest,
+    AssetCreateRequest
+} from './requests';
 import { AppDataSource } from "./data-source"
-import { User } from "./entities/User";
 const dotenv = require("dotenv");
 dotenv.config();
 
@@ -54,20 +58,30 @@ AppDataSource.initialize().then(async () => {
         }
     });
 
+    app.get('/assets/:id', async (req: Request, res: Response) => {
+        try {
+            const request = new AssetRetreiveRequest(req);
+            const assets = await AssetController.getAssets(request.getUserId());
+            res.send({assets: assets});
+        }
+        catch (err) {
+            res.statusMessage = err;
+            res.status(400).end();
+        }
+    });
+
+    app.post('/assets/:id', async (req: Request, res: Response) => {
+        try {
+            const request = new AssetCreateRequest(req);
+            await AssetController.create(request);
+            res.send({saved: true});
+        }
+        catch (err) {
+            res.statusMessage = err;
+            res.status(400).end();
+        }
+    });
+
     app.listen(3000, () => console.log('App listening'));
-
-    // console.log("Inserting a new user into the database...")
-    // const user = new User()
-    // user.firstName = "Timber"
-    // user.lastName = "Saw"
-    // user.email = 'a@mail.com'
-    // await AppDataSource.manager.save(user)
-    // console.log("Saved a new user with id: " + user.id)
-
-    // console.log("Loading users from the database...")
-    // const users = await AppDataSource.manager.find(User)
-    // console.log("Loaded users: ", users)
-
-    // console.log("Here you can setup and run express / fastify / any other framework.")
 
 }).catch(error => console.log(error))

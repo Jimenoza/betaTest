@@ -1,7 +1,7 @@
-import { User } from "../entities/User";
-import { UserCreateRequest, UserUpdateRequest, UserDeleteRequest } from '../requests';
-import { AppDataSource } from "../data-source"
-import { Error } from "../responses/error";
+import { User } from "../../entities/User";
+import { UserCreateRequest, UserUpdateRequest, UserDeleteRequest } from '../../requests';
+import { AppDataSource } from "../../data-source"
+import { Error } from "../../responses/error";
 
 export class UserController {
 
@@ -23,7 +23,7 @@ export class UserController {
 
     static async getUsers(): Promise<User[]> {
         const userRepository = AppDataSource.getRepository(User);
-        return await userRepository.find();
+        return await userRepository.find({ relations : { assets : true}});
     }
 
     static async update(request: UserUpdateRequest): Promise<User> {
