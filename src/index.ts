@@ -19,7 +19,9 @@ const app = express();
 app.use(express.json());
 
 AppDataSource.initialize().then(async () => {
-
+    // requests handle logic and validation of incoming data: body and logged user
+    // Controllers have the logic to save, edit or create
+    
     app.post('/users', async (req: Request, res: Response) => {
         try {
             const request = new UserCreateRequest(req);

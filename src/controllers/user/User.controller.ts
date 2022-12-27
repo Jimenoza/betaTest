@@ -6,19 +6,19 @@ import { Error } from "../../responses/error";
 export class UserController {
 
     static async create(request: UserCreateRequest): Promise<User | Error> {
-            const data = request.getBody();
-            const user = new User();
-            user.firstName = data.firstName;
-            user.lastName = data.lastName;
-            user.email = data.email;
-            user.password = data.password;
-    
-            const userRepository = AppDataSource.getRepository(User);
-            try {
-                return await userRepository.save(user);
-            } catch (err) {
-                throw new Error('Email exists');
-            }
+        const data = request.getBody();
+        const user = new User();
+        user.firstName = data.firstName;
+        user.lastName = data.lastName;
+        user.email = data.email;
+        user.password = data.password;
+
+        const userRepository = AppDataSource.getRepository(User);
+        try {
+            return await userRepository.save(user);
+        } catch (err) {
+            throw new Error('Email exists');
+        }
     }
 
     static async getUsers(): Promise<User[]> {
