@@ -1,5 +1,5 @@
 import { User, Asset } from "../../entities";
-import { AssetCreateRequest, AssetUpdateRequest, AssetDeleteRequest } from '../../requests';
+import { AssetCreateRequest, AssetUpdateRequest, AssetDeleteRequest, AssetRetreiveRequest } from '../../requests';
 import { AppDataSource } from "../../data-source"
 
 export class AssetController {
@@ -29,14 +29,14 @@ export class AssetController {
         }
     }
 
-    static async getAssets(userId: number): Promise<Asset[]> { 
+    static async getAssets(request: AssetRetreiveRequest): Promise<Asset[]> { 
         const assetRepository = AppDataSource.getRepository(Asset);
         const userRepository = AppDataSource.getRepository(User);
         const userToUpdate = await userRepository.findOneBy({
-            id: userId,
+            id: request.getUserId(),
         });
         if (!userToUpdate) throw new Error('User does not exist');
-        return await assetRepository.find({ where : { owner : { id : userId}}});
+        return await assetRepository.find({ where : { owner : { id : request.getUserId()}}});
     }
 
     static async update(request: AssetUpdateRequest): Promise<Asset> {

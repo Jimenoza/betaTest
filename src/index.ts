@@ -52,6 +52,7 @@ AppDataSource.initialize().then(async () => {
     app.put('/users',async (req: Request, res: Response) => {
         try {
             const request = new UserUpdateRequest(req);
+            request.authenticateToken(req, res);
             const response = await UserController.update(request);
             res.send({res: response});
         }
@@ -64,6 +65,7 @@ AppDataSource.initialize().then(async () => {
     app.delete('/users', async (req: Request, res: Response) => {
         try {
             const request = new UserDeleteRequest(req);
+            request.authenticateToken(req, res);
             const response = await UserController.delete(request);
             res.send({res: response});
         }
@@ -73,11 +75,11 @@ AppDataSource.initialize().then(async () => {
         }
     });
 
-    app.get('/user/:id/assets', async (req: Request, res: Response, next) => {
+    app.get('/user/assets', async (req: Request, res: Response, next) => {
         try {
             const request = new AssetRetreiveRequest(req);
             request.authenticateToken(req, res);
-            const assets = await AssetController.getAssets(request.getUserId());
+            const assets = await AssetController.getAssets(request);
             res.send({assets: assets});
         }
         catch (err) {
@@ -86,9 +88,10 @@ AppDataSource.initialize().then(async () => {
         }
     });
 
-    app.post('/user/:id/assets', async (req: Request, res: Response) => {
+    app.post('/user/assets', async (req: Request, res: Response) => {
         try {
             const request = new AssetCreateRequest(req);
+            request.authenticateToken(req, res);
             await AssetController.create(request);
             res.send({saved: true});
         }
@@ -98,9 +101,10 @@ AppDataSource.initialize().then(async () => {
         }
     });
 
-    app.put('/user/:idUser/assets/:idAsset', async (req: Request, res: Response) => {
+    app.put('/user/assets/:idAsset', async (req: Request, res: Response) => {
         try {
             const request = new AssetUpdateRequest(req);
+            request.authenticateToken(req, res);
             await AssetController.update(request);
             res.send({edited: true});
         }
@@ -110,9 +114,10 @@ AppDataSource.initialize().then(async () => {
         }
     });
 
-    app.delete('/user/:idUser/assets/:idAsset', async (req: Request, res: Response) => {
+    app.delete('/user/assets/:idAsset', async (req: Request, res: Response) => {
         try {
             const request = new AssetDeleteRequest(req);
+            request.authenticateToken(req, res);
             await AssetController.delete(request);
             res.send({deleted: true});
         }

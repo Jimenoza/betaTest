@@ -12,5 +12,4 @@ export class AssetRetreiveRequest extends CustomRequest {
     }
 
     getBody(): any { return this.data }
-    getUserId(): number {return parseInt(this.data.userId); }
 }

@@ -1,6 +1,13 @@
 import * as jwt from "jsonwebtoken";
 
 export class CustomRequest {
+  protected userId: number;
+
+  constructor(){
+    this.userId = undefined;
+  }
+
+  getUserId(): number { return this.userId; }
 
   generateToken(user): string {
     return jwt.sign(user, process.env.TOKEN);
@@ -13,10 +20,9 @@ export class CustomRequest {
     if (token == null) throw new Error('Invalid User');
 
     jwt.verify(token, process.env.TOKEN as string, (err: any, user: any) => {
-      console.log(err)
       if (err) throw new Error(err);
-      req.user = user
-    })
+      this.userId = parseInt(user);
+    });
   }
 }
 
