@@ -1,5 +1,5 @@
 import { User, Asset } from "../../entities";
-import { AssetCreateRequest, AssetUpdateRequest, UserDeleteRequest } from '../../requests';
+import { AssetCreateRequest, AssetUpdateRequest, AssetDeleteRequest } from '../../requests';
 import { AppDataSource } from "../../data-source"
 
 export class AssetController {
@@ -59,14 +59,18 @@ export class AssetController {
         return response;
     }
 
-    static async delete (request: UserDeleteRequest) {
-        const userRepository = AppDataSource.getRepository(User);
-        const data = request.getBody();
-        const userToRemove = await userRepository.findOneBy({
-            email: data.email,
+    static async delete (request: AssetDeleteRequest) {
+        const assetRepositry = AppDataSource.getRepository(Asset);
+        const assets = await assetRepositry.find({ 
+            where : { 
+                owner : { 
+                    id : request.getUserId()
+                },
+                id : request.getAssetId()
+            }
         });
-        if (!userToRemove) throw new Error('User does not exist');
-        const removedUser = await userRepository.remove(userToRemove);
-        return removedUser;
+        if (assets.length === 0) throw new Error('Asset does not exist');
+        const removedAsset = await assetRepositry.remove(assets);
+        return removedAsset;
     }
 }

@@ -6,7 +6,8 @@ import { UserCreateRequest,
     UserDeleteRequest,
     AssetRetreiveRequest,
     AssetCreateRequest,
-    AssetUpdateRequest
+    AssetUpdateRequest,
+    AssetDeleteRequest
 } from './requests';
 import { AppDataSource } from "./data-source"
 const dotenv = require("dotenv");
@@ -88,6 +89,18 @@ AppDataSource.initialize().then(async () => {
             const request = new AssetUpdateRequest(req);
             await AssetController.update(request);
             res.send({edited: true});
+        }
+        catch (err) {
+            res.statusMessage = err;
+            res.status(400).end();
+        }
+    });
+
+    app.delete('/user/:idUser/assets/:idAsset', async (req: Request, res: Response) => {
+        try {
+            const request = new AssetDeleteRequest(req);
+            await AssetController.delete(request);
+            res.send({deleted: true});
         }
         catch (err) {
             res.statusMessage = err;
