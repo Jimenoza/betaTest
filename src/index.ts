@@ -7,7 +7,8 @@ import { UserCreateRequest,
     AssetRetreiveRequest,
     AssetCreateRequest,
     AssetUpdateRequest,
-    AssetDeleteRequest
+    AssetDeleteRequest,
+    UserLoginRequest,
 } from './requests';
 import { AppDataSource } from "./data-source"
 const dotenv = require("dotenv");
@@ -28,6 +29,18 @@ AppDataSource.initialize().then(async () => {
         catch (err) {
             res.statusMessage = err;
             res.status(400).end();
+        }
+    });
+
+    app.post('/users/login', async (req: Request, res: Response) => {
+        try {
+            const request = new UserLoginRequest(req);
+            const response = await UserController.login(request);
+            res.send({token: response});
+        }
+        catch (err) {
+            res.statusMessage = err;
+            res.status(404).send(err);
         }
     });
 
@@ -60,15 +73,16 @@ AppDataSource.initialize().then(async () => {
         }
     });
 
-    app.get('/user/:id/assets', async (req: Request, res: Response) => {
+    app.get('/user/:id/assets', async (req: Request, res: Response, next) => {
         try {
             const request = new AssetRetreiveRequest(req);
+            request.authenticateToken(req, res);
             const assets = await AssetController.getAssets(request.getUserId());
             res.send({assets: assets});
         }
         catch (err) {
             res.statusMessage = err;
-            res.status(400).end();
+            res.status(400).send(err);
         }
     });
 

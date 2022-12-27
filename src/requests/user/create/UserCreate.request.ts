@@ -1,8 +1,10 @@
 import { Request } from "express"
+import { CustomRequest } from "../../customRequest";
 
-export class UserCreateRequest {
+export class UserCreateRequest extends CustomRequest{
     private data: any;
     constructor(req: Request) {
+        super();
         const body = req.body;
         if (!body.firstName) throw new Error('No first name provided');
         if (!body.lastName) throw new Error('No Last Name provided');

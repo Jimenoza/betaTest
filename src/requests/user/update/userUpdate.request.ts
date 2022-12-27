@@ -1,8 +1,10 @@
 import { Request } from "express"
+import { CustomRequest } from "../../customRequest";
 
-export class UserUpdateRequest {
+export class UserUpdateRequest extends CustomRequest {
     private data: any;
     constructor(req: Request) {
+        super();
         const body = req.body;
         if (!body.email) throw new Error('No email provided');
         this.data = {

@@ -1,10 +1,12 @@
 import { Request } from "express"
+import { CustomRequest } from "../../customRequest";
 
-export class AssetUpdateRequest {
+export class AssetUpdateRequest extends CustomRequest{
     private data: any;
     private assetId: number;
     private userId: number;
     constructor(req: Request) {
+        super();
         const body = req.body;
         this.assetId = parseInt(req.params.idAsset);
         this.userId = parseInt(req.params.idUser);

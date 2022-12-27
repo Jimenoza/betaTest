@@ -5,6 +5,7 @@ import { AssetRetreiveRequest } from "./asset/retreive/AssetRetreive.request";
 import { AssetCreateRequest } from "./asset/create/AssetCreate.request";
 import { AssetUpdateRequest } from "./asset/update/assetUpdate.request";
 import { AssetDeleteRequest } from "./asset/delete/AssetDelete.request";
+import { UserLoginRequest } from "./user/login/UserLogin.request";
 
 export { UserCreateRequest,
     UserUpdateRequest,
@@ -12,5 +13,6 @@ export { UserCreateRequest,
     AssetRetreiveRequest,
     AssetCreateRequest,
     AssetUpdateRequest,
-    AssetDeleteRequest
+    AssetDeleteRequest,
+    UserLoginRequest
 }

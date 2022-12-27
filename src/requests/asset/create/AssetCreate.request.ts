@@ -1,9 +1,11 @@
 import { Request } from "express"
+import { CustomRequest } from "../../customRequest";
 
-export class AssetCreateRequest {
+export class AssetCreateRequest extends CustomRequest{
     private data: any[] = [];
     private userId: number;
     constructor(req: Request) {
+        super();
         const body = req.body;
         this.userId = parseInt(req.params.id);
         body.forEach(element => {

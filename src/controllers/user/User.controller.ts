@@ -1,5 +1,5 @@
 import { User } from "../../entities/User";
-import { UserCreateRequest, UserUpdateRequest, UserDeleteRequest } from '../../requests';
+import { UserCreateRequest, UserUpdateRequest, UserDeleteRequest, UserLoginRequest } from '../../requests';
 import { AppDataSource } from "../../data-source"
 import { Error } from "../../responses/error";
 
@@ -50,5 +50,17 @@ export class UserController {
         if (!userToRemove) throw new Error('User does not exist');
         const removedUser = await userRepository.remove(userToRemove);
         return removedUser;
+    }
+
+    static async login(request: UserLoginRequest): Promise<String> {
+        const data = request.getBody();
+        const userRepository = AppDataSource.getRepository(User)
+        const user = await userRepository.findOneBy({
+            email: data.email,
+        });
+        if (!user) throw new Error('User does not exist');
+        if (user.password !== data.password) throw new Error('Incorrect Password');
+        const token = request.generateToken(user.id);
+        return token;
     }
 }
