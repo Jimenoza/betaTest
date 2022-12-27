@@ -30,7 +30,7 @@ export class UserController {
         const data = request.getBody();
         const userRepository = AppDataSource.getRepository(User)
         const userToUpdate = await userRepository.findOneBy({
-            email: data.email,
+            id: request.getUserId(),
         });
         if (!userToUpdate) throw new Error('User does not exist');
         if (data.newFirstName) userToUpdate.firstName = data.newFirstName;
@@ -45,7 +45,7 @@ export class UserController {
         const userRepository = AppDataSource.getRepository(User);
         const data = request.getBody();
         const userToRemove = await userRepository.findOneBy({
-            email: data.email,
+            id: request.getUserId(),
         });
         if (!userToRemove) throw new Error('User does not exist');
         const removedUser = await userRepository.remove(userToRemove);
