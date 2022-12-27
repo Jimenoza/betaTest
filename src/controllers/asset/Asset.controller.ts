@@ -1,5 +1,5 @@
 import { User, Asset } from "../../entities";
-import { AssetCreateRequest, UserUpdateRequest, UserDeleteRequest } from '../../requests';
+import { AssetCreateRequest, AssetUpdateRequest, UserDeleteRequest } from '../../requests';
 import { AppDataSource } from "../../data-source"
 
 export class AssetController {
@@ -39,18 +39,17 @@ export class AssetController {
         return await assetRepository.find({ where : { owner : { id : userId}}});
     }
 
-    static async update(request: UserUpdateRequest): Promise<User> {
+    static async update(request: AssetUpdateRequest): Promise<Asset> {
         const data = request.getBody();
-        const userRepository = AppDataSource.getRepository(User)
-        const userToUpdate = await userRepository.findOneBy({
-            email: data.email,
+        const assetRepositry = AppDataSource.getRepository(Asset)
+        const assetToUpdate = await assetRepositry.findOneBy({
+            id: request.getAssetId(),
         });
-        if (!userToUpdate) throw new Error('User does not exist');
-        if (data.newFirstName) userToUpdate.firstName = data.newFirstName;
-        if (data.newLastName) userToUpdate.lastName = data.newLastName;
-        if (data.newEmail) userToUpdate.email = data.newEmail;
-        if (data.newPassword) userToUpdate.password = data.newPassword;
-        const response = await userRepository.save(userToUpdate);
+        if (!assetToUpdate) throw new Error('Asset does not exist');
+        if (data.newName) assetToUpdate.name = data.newName;
+        if (data.newValue) assetToUpdate.value = data.newValue;
+        if (data.newDescription) assetToUpdate.description = data.newDescription;
+        const response = await assetRepositry.save(assetToUpdate);
         return response;
     }
 
