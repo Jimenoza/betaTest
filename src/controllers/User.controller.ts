@@ -1,5 +1,5 @@
 import { User } from "../entities/User";
-import { UserCreateRequest, UserUpdateRequest } from '../requests';
+import { UserCreateRequest, UserUpdateRequest, UserDeleteRequest } from '../requests';
 import { AppDataSource } from "../data-source"
 import { Error } from "../responses/error";
 
@@ -39,5 +39,16 @@ export class UserController {
         if (data.newPassword) userToUpdate.password = data.newPassword;
         const response = await userRepository.save(userToUpdate);
         return response;
+    }
+
+    static async delete (request: UserDeleteRequest) {
+        const userRepository = AppDataSource.getRepository(User);
+        const data = request.getBody();
+        const userToRemove = await userRepository.findOneBy({
+            email: data.email,
+        });
+        if (!userToRemove) throw new Error('User does not exist');
+        const removedUser = await userRepository.remove(userToRemove);
+        return removedUser;
     }
 }

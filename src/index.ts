@@ -1,7 +1,7 @@
 import * as express from "express"
 import { Request, Response } from "express"
 import { UserController } from "./controllers";
-import { UserCreateRequest, UserUpdateRequest } from './requests';
+import { UserCreateRequest, UserUpdateRequest, UserDeleteRequest } from './requests';
 import { AppDataSource } from "./data-source"
 import { User } from "./entities/User";
 const dotenv = require("dotenv");
@@ -43,9 +43,15 @@ AppDataSource.initialize().then(async () => {
     })
 
     app.delete('/users', async (req: Request, res: Response) => {
-        const photoRepository = AppDataSource.getRepository(User)
-        const photosToRemove = await photoRepository.delete({email : 'a@mail.com'})
-        res.send({deleted: photosToRemove});
+        try {
+            const request = new UserDeleteRequest(req);
+            const response = await UserController.delete(request);
+            res.send({res: response});
+        }
+        catch (err) {
+            res.statusMessage = err;
+            res.status(400).end();
+        }
     });
 
     app.listen(3000, () => console.log('App listening'));
