@@ -83,7 +83,7 @@ AppDataSource.initialize().then(async () => {
         }
     });
 
-    app.put('/user/assets/:id', async (req: Request, res: Response) => {
+    app.put('/user/:idUser/assets/:idAsset', async (req: Request, res: Response) => {
         try {
             const request = new AssetUpdateRequest(req);
             await AssetController.update(request);

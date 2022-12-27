@@ -41,11 +41,17 @@ export class AssetController {
 
     static async update(request: AssetUpdateRequest): Promise<Asset> {
         const data = request.getBody();
-        const assetRepositry = AppDataSource.getRepository(Asset)
-        const assetToUpdate = await assetRepositry.findOneBy({
-            id: request.getAssetId(),
+        const assetRepositry = AppDataSource.getRepository(Asset);
+        const assets = await assetRepositry.find({ 
+            where : { 
+                owner : { 
+                    id : request.getUserId()
+                },
+                id : request.getAssetId()
+            }
         });
-        if (!assetToUpdate) throw new Error('Asset does not exist');
+        if (assets.length === 0) throw new Error('Asset does not exist');
+        const assetToUpdate = assets[0];
         if (data.newName) assetToUpdate.name = data.newName;
         if (data.newValue) assetToUpdate.value = data.newValue;
         if (data.newDescription) assetToUpdate.description = data.newDescription;
