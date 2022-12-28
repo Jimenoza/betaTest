@@ -43,7 +43,6 @@ export class UserController {
 
     static async delete (request: UserDeleteRequest) {
         const userRepository = AppDataSource.getRepository(User);
-        const data = request.getBody();
         const userToRemove = await userRepository.findOneBy({
             id: request.getUserId(),
         });

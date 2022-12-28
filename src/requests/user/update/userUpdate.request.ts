@@ -6,13 +6,11 @@ export class UserUpdateRequest extends CustomRequest {
     constructor(req: Request) {
         super();
         const body = req.body;
-        if (!body.email) throw new Error('No email provided');
         this.data = {
             newFirstName: body.newFirstName ? body.newFirstName : '',
             newLastName: body.newLastName ? body.newLastName : '',
             newEmail: body.newEmail ? body.newEmail : '',
             newPassword: body.newPassword ? body.newPassword : '',
-            email: body.email,
         }
     }
 

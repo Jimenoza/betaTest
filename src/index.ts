@@ -21,12 +21,12 @@ app.use(express.json());
 AppDataSource.initialize().then(async () => {
     // requests handle logic and validation of incoming data: body and logged user
     // Controllers have the logic to save, edit or create
-    
+
     app.post('/users', async (req: Request, res: Response) => {
         try {
             const request = new UserCreateRequest(req);
             const response = await UserController.create(request);
-            res.send({res: response});
+            res.send({created: true});
         }
         catch (err) {
             res.statusMessage = err;
@@ -68,8 +68,8 @@ AppDataSource.initialize().then(async () => {
         try {
             const request = new UserDeleteRequest(req);
             request.authenticateToken(req, res);
-            const response = await UserController.delete(request);
-            res.send({res: response});
+            await UserController.delete(request);
+            res.send({res: true});
         }
         catch (err) {
             res.statusMessage = err;
